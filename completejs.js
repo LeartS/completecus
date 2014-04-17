@@ -1,3 +1,11 @@
+if (typeof String.prototype.startsWith != 'function') {
+	// Implementing String.startsWith for browser that don't support it yet
+	// (At the moment only Gecko/Firefox does)
+	String.prototype.startsWith = function(str) {
+		return this.lastIndexOf(str, 0) === 0;
+	};
+}
+
 function Complete(el, data) {
 
 	// Config properties
