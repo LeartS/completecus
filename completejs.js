@@ -15,12 +15,20 @@ function Complete(el, data) {
 	// Data
 	this.data = data;
 
+	// Create container element
+	var parent = el.parentNode;
+	this.container = document.createElement('span');
+	parent.insertBefore(this.container, el);
+	this.container.appendChild(el);
+	this.container.className = 'completejs';
+
 	// DOM elements
-	this.inputElement = el;
-	this.list = document.createElement('ul');
+	var parent = el.parentNode;
+	this.inputElement = el; // Input element
+	this.list = document.createElement('ul'); // ul
 	this.dropDown = document.createElement('div');
 	this.dropDown.appendChild(this.list);
-	document.body.appendChild(this.dropDown);
+	this.container.appendChild(this.dropDown);
 
 	// Listeners
 	var selfie = this; // just bear with me
