@@ -1,6 +1,7 @@
 .completejs {
 	padding: 0;
 	margin: 0;
+	position: relative;
 }
 
 .completejs input {
@@ -8,11 +9,21 @@
 	margin: 0;
 }
 
+.completejs div {
+	position: absolute;
+	margin: 0;
+	width: 200px;
+	max-height: 100px;
+	overflow: auto;
+	border: 1px solid #CCC;
+}
+
 .completejs ul {
 	/* float: left; */
-	position: absolute;
+	/* position: absolute; */
 	list-style: none;
-	border: 1px solid #CCC;
+	/* border: 1px solid #CCC; */
+	/* border-top: 0px; */
 	padding: 2px;
 	margin: 0;
 	width: auto;
