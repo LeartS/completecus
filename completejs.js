@@ -46,10 +46,20 @@ function Complete(el, data) {
 	// Listeners
 	var selfie = this; // just bear with me
 	el.addEventListener('input', function cb(e) { selfie.lookup(); });
+	el.addEventListener('blur', function en(e) { selfie.disableDropDown(); });
+	el.addEventListener('focus', function dis(e) { selfie.enableDropDown(); });
 
 	// Initial lookup to be consistent
 	this.lookup();
 
+}
+
+Complete.prototype.disableDropDown = function() {
+	this.dropDown.style.display = 'none';
+}
+
+Complete.prototype.enableDropDown = function() {
+	this.dropDown.style.display = 'block';
 }
 
 Complete.prototype.lookup = function() {
