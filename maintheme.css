@@ -1,0 +1,25 @@
+.completejs {
+	padding: 0;
+	margin: 0;
+}
+
+.completejs input {
+	padding: 0;
+	margin: 0;
+}
+
+.completejs ul {
+	/* float: left; */
+	position: absolute;
+	list-style: none;
+	border: 1px solid #CCC;
+	padding: 2px;
+	margin: 0;
+	width: auto;
+	background: white;
+	z-index: 100;
+}
+
+.completejs ul li {
+	/* border: 1px solid red; */
+}
