@@ -13,9 +13,11 @@
 	position: absolute;
 	margin: 0;
 	width: 200px;
-	max-height: 100px;
+	/* max-height: 100px; */
 	overflow: auto;
 	border: 1px solid #CCC;
+	background: white;
+	z-index: 100;
 }
 
 .completejs ul {
@@ -27,8 +29,6 @@
 	padding: 2px;
 	margin: 0;
 	width: auto;
-	background: white;
-	z-index: 100;
 }
 
 .completejs ul li {
