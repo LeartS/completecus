@@ -48,10 +48,29 @@ function Complete(el, data) {
 	el.addEventListener('input', function cb(e) { selfie.lookup(); });
 	el.addEventListener('blur', function en(e) { selfie.disableDropDown(); });
 	el.addEventListener('focus', function dis(e) { selfie.enableDropDown(); });
+	el.addEventListener('keydown', function key(e) { selfie.moveSelected(e); });
 
 	// Initial lookup to be consistent
 	this.lookup();
+	this.disableDropDown();
+	this.selectedIndex = 0;
 
+}
+
+Complete.prototype.toggleSelected = function(e) {
+	// IE < 10 does not support this. I do not care.
+	e.classList.toggle('selected');
+}
+
+Complete.prototype.moveSelected = function(e) {
+	if (e.keyCode == 0x28) {
+		this.toggleSelected(this.list.children[this.selectedIndex++]);
+		this.toggleSelected(this.list.children[this.selectedIndex]);
+	}
+	else if (e.keyCode == 0x26) { // UP
+		this.toggleSelected(this.list.children[this.selectedIndex--]);
+		this.toggleSelected(this.list.children[this.selectedIndex]);
+	}
 }
 
 Complete.prototype.disableDropDown = function() {
@@ -79,11 +98,11 @@ Complete.prototype.lookup = function() {
 			this.list.appendChild(message);
 		}
 		else {
-			this.dropDown.style.display = 'none';
+			this.disableDropDown();
 		}
 	}
 	else {
-		this.dropDown.style.display = 'block';
+		this.enableDropDown();
 		for (var i = 0; i < Math.min(this.maxDisplay, matching.length); i++) {
 			var optionValue = document.createTextNode(matching[i]);
 			var newOption = document.createElement('li');
