@@ -6,14 +6,27 @@ if (typeof String.prototype.startsWith != 'function') {
 	};
 }
 
+
+
 function Complete(el, data) {
 
 	// Config properties
 	this.caseSensitive = false;
 	this.exact = true;
+	this.maxDisplay = 30; // max elements to display in dropdown
+	this.emptyMessage = 'No results';
+	this.allowDuplicates = false;
 
 	// Data
-	this.data = data;
+	this.data = [];
+	data.sort();
+	var previousElement = data[0]; // TODO: check if data has at least 1 elem
+	for (var i = 1; i < data.length; i++) {
+		if (data[i] != previousElement || this.allowDuplicates) {
+			previousElement = data[i];
+			this.data.push(data[i]);
+		}
+	}
 
 	// Create container element
 	var parent = el.parentNode;
@@ -34,9 +47,11 @@ function Complete(el, data) {
 	var selfie = this; // just bear with me
 	el.addEventListener('input', function cb(e) { selfie.lookup(); });
 
+	// Initial lookup to be consistent
+	this.lookup();
+
 }
 
-// I'm wasteful and stupid. Please improve me.
 Complete.prototype.lookup = function() {
 
 	// delete all the previous matches
@@ -44,7 +59,33 @@ Complete.prototype.lookup = function() {
 		this.list.firstChild.remove();
 	}
 
-	// add the new ones
+	// get the new ones
+	var matching = this.getMatching(this.inputElement.value);
+
+	// Add them to the DOM
+	if (matching.length === 0) {
+		if (this.emptyMessage) {
+			var message = document.createTextNode(this.emptyMessage);
+			this.list.appendChild(message);
+		}
+		else {
+			this.dropDown.style.display = 'none';
+		}
+	}
+	else {
+		this.dropDown.style.display = 'block';
+		for (var i = 0; i < Math.min(this.maxDisplay, matching.length); i++) {
+			var optionValue = document.createTextNode(matching[i]);
+			var newOption = document.createElement('li');
+			newOption.appendChild(optionValue);
+			this.list.appendChild(newOption);
+		}
+	}
+};
+
+// I'm wasteful and stupid. Please improve me.
+Complete.prototype.getMatching = function() {
+	var matching = [];
 	var selfie = this;
 	this.data.forEach(function(d) {
 		var candidate = d;
@@ -54,10 +95,8 @@ Complete.prototype.lookup = function() {
 			toMatch = toMatch.toLowerCase();
 		}
 		if (candidate.startsWith(toMatch)) {
-			var optionValue = document.createTextNode(d);
-			var newOption = document.createElement('li');
-			newOption.appendChild(optionValue);
-			selfie.list.appendChild(newOption);
+			matching.push(candidate);
 		}
 	});
-};
+	return matching;
+}
