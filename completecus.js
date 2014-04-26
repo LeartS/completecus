@@ -33,7 +33,7 @@ function Complete(el, data) {
 	this.container = document.createElement('span');
 	parent.insertBefore(this.container, el);
 	this.container.appendChild(el);
-	this.container.className = 'completejs';
+	this.container.className = 'completecus';
 
 	// DOM elements
 	var parent = el.parentNode;
