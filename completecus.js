@@ -16,6 +16,7 @@ function Complete(el, data) {
 	this.maxDisplay = 30; // max elements to display in dropdown
 	this.emptyMessage = 'No results';
 	this.allowDuplicates = false;
+	this.activateLength = 0;
 
 	// Data
 	this.data = [];
@@ -43,18 +44,18 @@ function Complete(el, data) {
 	this.dropDown.appendChild(this.list);
 	this.container.appendChild(this.dropDown);
 
+	// Internal variables
+	this.selectedIndex = 0;
+
+	// Do not display anything until we are focused.
+	this.disableDropDown();
+
 	// Listeners
 	var selfie = this; // just bear with me
 	el.addEventListener('input', function cb(e) { selfie.lookup(); });
-	el.addEventListener('blur', function en(e) { selfie.disableDropDown(); });
-	el.addEventListener('focus', function dis(e) { selfie.enableDropDown(); });
+	el.addEventListener('blur', function dis(e) { selfie.disableDropDown(); });
+	el.addEventListener('focus', function en(e) { selfie.lookup(); });
 	el.addEventListener('keydown', function key(e) { selfie.moveSelected(e); });
-
-	// Initial lookup to be consistent
-	this.lookup();
-	this.disableDropDown();
-	this.selectedIndex = 0;
-
 }
 
 Complete.prototype.toggleSelected = function(e) {
@@ -63,14 +64,14 @@ Complete.prototype.toggleSelected = function(e) {
 }
 
 Complete.prototype.moveSelected = function(e) {
-	if (e.keyCode == 0x28) {
-		this.toggleSelected(this.list.children[this.selectedIndex++]);
-		this.toggleSelected(this.list.children[this.selectedIndex]);
+	if (this.list.children.length === 0) { return null; }
+	if (e.keyCode == 0x28 && this.selectedIndex !== this.list.children.length - 1) { // DOWN
+		this.list.children[this.selectedIndex++].classList.remove('selected');
+		this.list.children[this.selectedIndex].classList.add('selected');
 	}
-	else if (e.keyCode == 0x26) { // UP
-		this.toggleSelected(this.list.children[this.selectedIndex--]);
-		this.toggleSelected(this.list.children[this.selectedIndex]);
-	}
+	else if (e.keyCode == 0x26 && this.selectedIndex !== 0) { // UP
+		this.list.children[this.selectedIndex--].classList.remove('selected');
+		this.list.children[this.selectedIndex].classList.add('selected');	}
 }
 
 Complete.prototype.disableDropDown = function() {
@@ -79,9 +80,17 @@ Complete.prototype.disableDropDown = function() {
 
 Complete.prototype.enableDropDown = function() {
 	this.dropDown.style.display = 'block';
+	this.selectedIndex = 0;
+	if (this.list.children.length !== 0) {
+		this.list.children[this.selectedIndex].classList.add('selected');
+	}
 }
 
 Complete.prototype.lookup = function() {
+
+	if (this.inputElement.value.length < this.activateLength) {
+		return null;
+	}
 
 	// delete all the previous matches
 	while (this.list.firstChild) {
@@ -96,19 +105,20 @@ Complete.prototype.lookup = function() {
 		if (this.emptyMessage) {
 			var message = document.createTextNode(this.emptyMessage);
 			this.list.appendChild(message);
+			this.enableDropDown();
 		}
 		else {
 			this.disableDropDown();
 		}
 	}
 	else {
-		this.enableDropDown();
 		for (var i = 0; i < Math.min(this.maxDisplay, matching.length); i++) {
 			var optionValue = document.createTextNode(matching[i]);
 			var newOption = document.createElement('li');
 			newOption.appendChild(optionValue);
 			this.list.appendChild(newOption);
 		}
+		this.enableDropDown();
 	}
 };
 
