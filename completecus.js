@@ -58,11 +58,6 @@ function Complete(el, data) {
 	el.addEventListener('keydown', function key(e) { selfie.moveSelected(e); });
 }
 
-Complete.prototype.toggleSelected = function(e) {
-	// IE < 10 does not support this. I do not care.
-	e.classList.toggle('selected');
-}
-
 Complete.prototype.moveSelected = function(e) {
 	if (this.list.children.length === 0) { return null; }
 	if (e.keyCode == 0x28 && this.selectedIndex !== this.list.children.length - 1) { // DOWN
@@ -74,16 +69,34 @@ Complete.prototype.moveSelected = function(e) {
 		this.list.children[this.selectedIndex].classList.add('selected');	}
 }
 
+Complete.prototype.select = function(e) {
+
+	function optionIndex() {
+		var option = e;
+		var i = 0;
+		while (option = option.previousElementSibling) { ++i; }
+		return i;
+	}
+	this.list.children[this.selectedIndex].classList.remove('selected');
+	e.classList.add('selected');
+	this.selectedIndex = optionIndex();
+}
+
 Complete.prototype.disableDropDown = function() {
 	this.dropDown.style.display = 'none';
 }
 
 Complete.prototype.enableDropDown = function() {
 	this.dropDown.style.display = 'block';
-	this.selectedIndex = 0;
-	if (this.list.children.length !== 0) {
-		this.list.children[this.selectedIndex].classList.add('selected');
-	}
+}
+
+Complete.prototype.createOption = function(optionValue) {
+	var text = document.createTextNode(optionValue);
+	var newOption = document.createElement('li');
+	newOption.appendChild(text);
+	var selfie = this;
+	newOption.addEventListener('mouseover', function(e) { selfie.select(this); });
+	this.list.appendChild(newOption);
 }
 
 Complete.prototype.lookup = function() {
@@ -113,11 +126,10 @@ Complete.prototype.lookup = function() {
 	}
 	else {
 		for (var i = 0; i < Math.min(this.maxDisplay, matching.length); i++) {
-			var optionValue = document.createTextNode(matching[i]);
-			var newOption = document.createElement('li');
-			newOption.appendChild(optionValue);
-			this.list.appendChild(newOption);
+			this.createOption(matching[i]);
 		}
+		this.selectedIndex = 0;
+		this.list.children[this.selectedIndex].classList.add('selected');
 		this.enableDropDown();
 	}
 };
