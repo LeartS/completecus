@@ -53,7 +53,7 @@ function Complete(el, data) {
 	// Listeners
 	var selfie = this; // just bear with me
 	el.addEventListener('input', function cb(e) { selfie.lookup(); });
-	el.addEventListener('blur', function dis(e) { console.log('shit'); selfie.disableDropDown(); });
+	el.addEventListener('blur', function dis(e) { selfie.disableDropDown(); });
 	el.addEventListener('focus', function en(e) { selfie.lookup(); });
 	this.container.addEventListener('keydown', function key(e) { selfie.handleKeyPress(e); });
 }
@@ -105,7 +105,7 @@ Complete.prototype.createOption = function(optionValue) {
 	newOption.appendChild(text);
 	var selfie = this;
 	newOption.addEventListener('mouseover', function(e) { selfie.select(this); });
-	newOption.addEventListener('mousedown', function(e) { console.log('fsdfsfsf'); selfie.complete(); }, true);
+	newOption.addEventListener('mousedown', function(e) { selfie.complete(); }, true);
 	this.list.appendChild(newOption);
 }
 
