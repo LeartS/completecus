@@ -53,12 +53,12 @@ function Complete(el, data) {
 	// Listeners
 	var selfie = this; // just bear with me
 	el.addEventListener('input', function cb(e) { selfie.lookup(); });
-	el.addEventListener('blur', function dis(e) { selfie.disableDropDown(); });
+	el.addEventListener('blur', function dis(e) { console.log('shit'); selfie.disableDropDown(); });
 	el.addEventListener('focus', function en(e) { selfie.lookup(); });
-	el.addEventListener('keydown', function key(e) { selfie.moveSelected(e); });
+	this.container.addEventListener('keydown', function key(e) { selfie.handleKeyPress(e); });
 }
 
-Complete.prototype.moveSelected = function(e) {
+Complete.prototype.handleKeyPress = function(e) {
 	if (this.list.children.length === 0) { return null; }
 	if (e.keyCode == 0x28 && this.selectedIndex !== this.list.children.length - 1) { // DOWN
 		this.list.children[this.selectedIndex++].classList.remove('selected');
@@ -66,7 +66,11 @@ Complete.prototype.moveSelected = function(e) {
 	}
 	else if (e.keyCode == 0x26 && this.selectedIndex !== 0) { // UP
 		this.list.children[this.selectedIndex--].classList.remove('selected');
-		this.list.children[this.selectedIndex].classList.add('selected');	}
+		this.list.children[this.selectedIndex].classList.add('selected');
+	}
+	else if (e.keyCode == 0x0D) {
+		this.complete();
+	}
 }
 
 Complete.prototype.select = function(e) {
@@ -80,6 +84,11 @@ Complete.prototype.select = function(e) {
 	this.list.children[this.selectedIndex].classList.remove('selected');
 	e.classList.add('selected');
 	this.selectedIndex = optionIndex();
+}
+
+Complete.prototype.complete = function() {
+	this.inputElement.value = this.list.children[this.selectedIndex].textContent;
+	this.disableDropDown();
 }
 
 Complete.prototype.disableDropDown = function() {
@@ -96,6 +105,7 @@ Complete.prototype.createOption = function(optionValue) {
 	newOption.appendChild(text);
 	var selfie = this;
 	newOption.addEventListener('mouseover', function(e) { selfie.select(this); });
+	newOption.addEventListener('mousedown', function(e) { console.log('fsdfsfsf'); selfie.complete(); }, true);
 	this.list.appendChild(newOption);
 }
 
